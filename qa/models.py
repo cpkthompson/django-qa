@@ -3,7 +3,6 @@ from django.conf import settings
 from django.db import models
 from django.db.models import F
 from django.utils.text import slugify
-from django_markdown.models import MarkdownField
 from hitcount.models import HitCountMixin
 from taggit.managers import TaggableManager
 
@@ -30,7 +29,7 @@ class Question(models.Model, HitCountMixin):
     """Model class to contain every question in the forum"""
     slug = models.SlugField(max_length=200)
     title = models.CharField(max_length=200, blank=False)
-    description = MarkdownField()
+    description = models.TextField()
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     tags = TaggableManager()
     reward = models.IntegerField(default=0)
@@ -65,7 +64,7 @@ class Answer(models.Model):
     """Model class to contain every answer in the forum and to link it
     to the proper question."""
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer_text = MarkdownField()
+    answer_text = models.TextField()
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     updated = models.DateTimeField('date updated', auto_now=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -131,7 +130,7 @@ class BaseComment(models.Model):
 
 class AnswerComment(BaseComment):
     """Model class to contain the comments for the answers."""
-    comment_text = MarkdownField()
+    comment_text = models.TextField()
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
